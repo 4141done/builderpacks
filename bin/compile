@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+
+# sync output
+$stdout.sync = true
+
+$:.unshift File.expand_path("../../lib", __FILE__)
+require "language_pack"
+
+if pack = LanguagePack.detect(ARGV[0], ARGV[1])
+  pack.log("compile") do
+    pack.compile
+  end
+end
+
+# Start OUP Content
+system <<-SH
+  echo "hello";
+  BUILD_DIR=#{ARGV[0]};
+  export BUILD_DIR;
+
+  IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz";
+  IMAGE_PROC_VM_VENDOR="vendor/imgproc";
+
+  echo "-----> Compiling OUP buildpack";
+  echo $BUILD_DIR;
+  echo $BUILD_DIR/$IMAGE_PROC_VM_VENDOR;
+  echo $IMAGE_PROC_VM_BINARY;
+
+  mkdir -p $BUILD_DIR/$IMAGE_PROC_VM_VENDOR;
+  curl $IMAGE_PROC_VM_BINARY -o - | tar xz -C $BUILD_DIR/$IMAGE_PROC_VM_VENDOR -f -;
+SH
