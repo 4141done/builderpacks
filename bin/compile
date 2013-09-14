@@ -14,16 +14,17 @@ end
 
 # Start OUP Content
 system <<-SH
-  BUILD_DIR=#{ARGV[0]};
+  BUILD_DIR=#{ARGV[1]};
   export BUILD_DIR;
 
-  # Switch to the repo's context.
-  cd $BUILD_DIR;
+  IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz"
+  IMAGE_PROC_VM_VENDOR="vendor/imgproc"
 
-  IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz";
-  IMAGE_PROC_LOCATION=""/app/bin";";
+  echo "-----> Compiling OUP buildpack"
+  echo $BUILD_DIR
+  echo $BUILD_DIR/$IMAGE_PROC_VM_VENDOR
+  echo $IMAGE_PROC_VM_BINARY
 
-  echo "-----> Compiling OUP buildpack";
-
-  curl --silent --max-time 60 --location "$IMAGE_PROC_VM_BINARY" | tar xz -C $IMAGE_PROC_LOCATION;
+  mkdir -p $BUILD_DIR/$IMAGE_PROC_VM_VENDOR
+  curl $IMAGE_PROC_VM_BINARY -o - | tar xz -C $BUILD_DIR/$IMAGE_PROC_VM_VENDOR -f -
 SH
