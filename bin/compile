@@ -2,30 +2,38 @@
 
 # Start OUP Content
 system <<-SH
-  echo "Starting custom buildpack operations"
+  echo "Starting custom buildpack operations";
 
-  BUILD_DIR=#{ARGV[0]}
-  CACHE_DIR=#{ARGV[1]}
+  BUILD_DIR=#{ARGV[0]};
+  CACHE_DIR=#{ARGV[1]};
 
-  ls
-  echo "build dir: "
-  echo $BUILD_DIR
+  # add BUILD DIR to path
+  export BUILD_DIR;
 
-  echo "cache dir: "
-  echo $CACHE_DIR
+  echo "build dir: ";
+  echo $BUILD_DIR;
 
-  IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz"
-  IMAGE_PROC_VM_VENDOR="vendor/imgproc"
-  FILE_NAME="imgproc.tar.gz"
+  echo "cache dir: ";
+  echo $CACHE_DIR;
 
-  # See if we have a cached copy of the binaries already
-  mkdir -p $CACHE_DIR
-  curl $IMAGE_PROC_VM_BINARY -s -o $CACHE_DIR/$FILE_NAME
+  IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz";
+  IMAGE_PROC_VM_VENDOR="/app/bin";
 
-  # extract to vender/imgproc
-  echo "Extracting image processing libraries..."
-  mkdir -p $BUILD_DIR/$IMAGE_PROC_VM_VENDOR
-  tar zxf $CACHE_DIR/$FILE_NAME -C $BUILD_DIR/$IMAGE_PROC_VM_VENDOR
+  cd $BUILD_DIR;
+
+  echo "----> Downloading binary dependencies...";
+
+  curl --silent --max-time 60 --location "$IMAGE_PROC_VM_BINARY" | tar xz;
+
+  # Just trying this...
+  curl --silent --max-time 60 --location "$IMAGE_PROC_VM_BINARY" | tar xz -C $IMAGE_PROC_VM_VENDOR;
+
+  echo "----> Done unzipping dependencies...";
+
+  ls;
+
+  echo "the path: ";
+  echo $PATH;
 SH
 
 # sync output
