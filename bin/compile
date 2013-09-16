@@ -2,10 +2,16 @@
 
 # Start OUP Content
 system <<-SH
-  set -e
+  echo "Starting custom buildpack operations"
 
   BUILD_DIR=$1
   CACHE_DIR=$2
+
+  echo "build dir: "
+  echo $BUILD_DIR
+
+  echo "cache dir: "
+  echo $CACHE_DIR
 
   IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz"
   IMAGE_PROC_VM_VENDOR="vendor/imgproc"
@@ -13,10 +19,7 @@ system <<-SH
 
   # See if we have a cached copy of the binaries already
   mkdir -p $CACHE_DIR
-  if ! [ -e $CACHE_DIR/$FILE_NAME ]; then
-    echo "----> Fetching image processing libraries..."
-    curl $IMAGE_PROC_VM_BINARY -s -o $CACHE_DIR/$FILE_NAME
-  fi
+  curl $IMAGE_PROC_VM_BINARY -s -o $CACHE_DIR/$FILE_NAME
 
   # extract to vender/imgproc
   echo "Extracting image processing libraries..."
