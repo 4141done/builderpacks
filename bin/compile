@@ -1,6 +1,5 @@
 #!/usr/bin/env ruby
 
-# Start OUP Content
 system <<-SH
   echo "Starting custom buildpack operations";
 
@@ -10,14 +9,7 @@ system <<-SH
   # add BUILD DIR to path
   export BUILD_DIR;
 
-  echo "build dir: ";
-  echo $BUILD_DIR;
-
-  echo "cache dir: ";
-  echo $CACHE_DIR;
-
   IMAGE_PROC_VM_BINARY="https://s3.amazonaws.com/oup-heroku-buildpacks/imgproc.tar.gz";
-  IMAGE_PROC_VM_VENDOR="/app/bin";
 
   cd $BUILD_DIR;
 
@@ -25,25 +17,5 @@ system <<-SH
 
   curl --silent --max-time 60 --location "$IMAGE_PROC_VM_BINARY" | tar xz;
 
-  # Just trying this...
-  curl --silent --max-time 60 --location "$IMAGE_PROC_VM_BINARY" | tar xz -C $IMAGE_PROC_VM_VENDOR;
-
   echo "----> Done unzipping dependencies...";
-
-  ls;
-
-  echo "the path: ";
-  echo $PATH;
 SH
-
-# sync output
-$stdout.sync = true
-
-$:.unshift File.expand_path("../../lib", __FILE__)
-require "language_pack"
-
-if pack = LanguagePack.detect(ARGV[0], ARGV[1])
-  pack.log("compile") do
-    pack.compile
-  end
-end
