@@ -4,8 +4,8 @@
 system <<-SH
   echo "Starting custom buildpack operations"
 
-  BUILD_DIR=$1
-  CACHE_DIR=$2
+  BUILD_DIR=#{ARGV[0]}
+  CACHE_DIR=#{ARGV[1]}
 
   echo "build dir: "
   echo $BUILD_DIR
